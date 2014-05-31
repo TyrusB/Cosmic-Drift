@@ -69,14 +69,14 @@
     ctx.clearRect(0, 0, Game.DIM_X, Game.DIM_Y);
 
     this.asteroids.forEach( function (el) {
-      Asteroids.Asteroid.prototype.draw.bind(el, ctx);
+      Asteroids.Asteroid.prototype.draw.call(el, ctx);
     });
 
     this.bullets.forEach( function (el) {
-      Asteroids.Bullet.prototype.draw.bind(el, ctx);
+      Asteroids.Bullet.prototype.draw.call(el, ctx);
     });
 
-    Asteroids.Ship.prototype.draw.bind(this.ship, ctx);
+    Asteroids.Ship.prototype.draw.call(this.ship, ctx);
     this.drawScore(ctx);
   }
 
@@ -124,6 +124,7 @@
 
   Game.prototype.checkCollisions = function() {
     var that = this;
+    //check if ship has collided with asteroids
     var crashed = this.asteroids.some( function (el) {
       return el.isCollidedWith(that.ship);
     });
@@ -132,6 +133,11 @@
       that.stop();
       this.loadEnding();
     }
+
+    //check for bullet/asteroid collisions
+    this.bullets.forEach( function(bullet) {
+      bullet.hitAsteroids(that);
+    })
   }
 
   Game.prototype.checkBoundaries = function() {

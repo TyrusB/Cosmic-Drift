@@ -18,11 +18,12 @@
   //Can tweak to optimize the data that's being sent over.
   Connection.prototype.getGameInfo = function() {
     //better way of accessing this?
-    return {
+    var data = JSON.stringify({
       asteroids: window.game.asteroids,
       ship: window.game.ship,
-      buttets: window.game.bullets,
+      bullets: window.game.bullets,
       score: window.game.score
-    }
+    });
+    return data;
   }
 })(this)
