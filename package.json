@@ -1,0 +1,12 @@
+{
+  "name": "Cosmic-Drift",
+  "description": "A multiplayer Asteroids-like game",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "mime": "~1.2.7",
+    "node-static": "",
+    "lodash": "^2.4.1",
+    "socket.io": "^1.0.2"
+  }
+}

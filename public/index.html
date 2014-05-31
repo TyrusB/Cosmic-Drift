@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cosmic Drift</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src='javascripts/connection.js'></script>
+    <script src='javascripts/socket_listener.js'></script>
+    <script src="javascripts/cosmic_drift_game/keymaster.js"></script>
+    <script src='javascripts/cosmic_drift_game/inherits.js'></script>
+    <script src='javascripts/cosmic_drift_game/moving_object.js'></script>
+    <script src='javascripts/cosmic_drift_game/asteroid.js'></script>
+    <script src='javascripts/cosmic_drift_game/ship.js'></script>
+    <script src='javascripts/cosmic_drift_game/bullet.js'></script>
+    <script src='javascripts/cosmic_drift_game/game.js'></script>
+</head>
+<body>
+    <div class='game-holder'>
+        <canvas id="canvas" width="500" height="500"></canvas>
+    </div>
+    <div class='game-holder'>
+        <canvas id='other_player_canvas' width='500' height='500'></canvas>
+    </div>
+
+    <script>
+        var canvas = document.getElementById("canvas");
+        var spaceBackground = new Image();
+        spaceBackground.src = "images/space.jpg";
+
+        spaceBackground.onload = function() {
+            game = new Asteroids.Game(canvas);
+            game.loadInstructions();
+        };
+
+
+    </script>
+</body>
+</html>
+
+<style>
+body h1 {
+  text-align: center;
+  color: yellow;
+}
+
+.game-holder {
+    margin-left: 20px;
+    margin-right: auto;
+    margin-top: 2%;
+    width: 500px;
+    height: 500px;
+    float: left;
+}
+
+canvas {
+    border: 2px solid black;
+    margin-left: auto;
+    margin-right: auto;
+    display: inline;
+    background: url('images/space.jpg');
+}
+
+body {
+  background: url("images/cockpit.jpg") no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+</style>
+
