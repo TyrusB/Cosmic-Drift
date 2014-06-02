@@ -129,10 +129,10 @@
       return el.isCollidedWith(that.ship);
     });
 
-    if(crashed){
-      that.stop();
-      this.loadEnding();
-    }
+    // if(crashed){
+    //   that.stop();
+    //   this.loadEnding();
+    // }
 
     //check for bullet/asteroid collisions
     this.bullets.forEach( function(bullet) {
@@ -262,7 +262,7 @@
 
       // Tell the server we're ready
       root.openConnection.indicateReady();
-      root.openConnection.socket.on('begin_game', function() {
+      root.openConnection.socket.on('players_ready', function() {
         console.log('begin_message_received')
         game.start();
         key.setScope('game');
@@ -312,7 +312,7 @@
 
     }
 
-    var ending = setInterval(loadFrame, 25);     
+    var ending = setInterval(loadFrame, 40);     
 
     key('enter', 'ending', function() {
       clearInterval(ending);
