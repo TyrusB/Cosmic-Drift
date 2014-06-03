@@ -6,8 +6,10 @@
     this.rcanvas = rcanvas;
     this.midcanvas = midcanvas;
 
+    this.game = null;
+
     var loader = this;
-    this.gameState = StateMachine.create({
+    this.gameStateMachine = StateMachine.create({
       events: [
         { name: 'scrollIntro',     from: 'none',            to: 'intro'              },
         { name: 'finishedIntro',   from: 'intro',           to: 'playerSelect'       },
@@ -60,7 +62,7 @@
           key('enter', 'intro', function() {
             clearInterval(scroll);
 
-            loader.gameState.finishedIntro();
+            loader.gameStateMachine.finishedIntro();
           });
         },
 
@@ -122,16 +124,17 @@
 
           key('enter', 'playerSelect', function() {
             if (selector === 'single') {
-              loader.gameState.onePlayer();
+              loader.gameStateMachine.onePlayer();
             } else if (selector === 'multi') {
-              loader.gameState.twoPlayers();
+              loader.gameStateMachine.twoPlayers();
             }
           });
         },
 
         onsinglePlayerGame: function() {
           key.setScope('game');
-          window.game.start();
+          loader.game = new Asteroids.Game(loader.midcanvas, false);
+          loader.game.start();
         },
 
         onwaitingForOther: function() {
@@ -185,7 +188,7 @@
           root.openConnection.socket.on('players_ready', function() {
             console.log('ready message received');
             clearInterval(waitingDots);
-            loader.gameState.allPlayersReady();
+            loader.gameStateMachine.allPlayersReady();
           });
         },
 
@@ -223,16 +226,20 @@
             } else if (i === 0) {
               prepareLContext();
               lctx.fillText('Go!', center_lx, center_ly);
+              i--;
             } else {
               clearInterval(countdown);
-              loader.gameState.countdownDone();
+              loader.gameStateMachine.countdownDone();
             }
           }, 750)
         },
 
         onplayingMultiplayerGame: function() {
           key.setScope('game');
-          window.game.start();
+          loader.game = new Asteroids.Game(loader.lcanvas, true);
+          loader.game.start();
+
+          window.openConnection.beginListening(loader.rcanvas);
         }
       }
     })

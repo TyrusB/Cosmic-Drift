@@ -34,8 +34,10 @@
         spaceBackground.src = "images/space.jpg";
 
         spaceBackground.onload = function() {
-            game = new Asteroids.Game(lcanvas, rcanvas, midcanvas);
-            game.loader.gameState.scrollIntro();
+            loader = new Asteroids.Loader(lcanvas, rcanvas, midcanvas);
+            window.loader = loader;
+            
+            loader.gameStateMachine.scrollIntro();
         };
 
 

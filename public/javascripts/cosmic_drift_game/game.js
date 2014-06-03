@@ -1,27 +1,21 @@
 (function(root){
   var Asteroids = root.Asteroids = (root.Asteroids || {} )
 
-  var Game = Asteroids.Game = function (lcanvas, rcanvas, midcanvas) {
+  //Game takes a canvas as an argument, and runs a game in that canvas
+  var Game = Asteroids.Game = function (targetCanvas, isMultiplayer) {
     this.asteroids = [];
     this.bullets = [];
     this.ship = null;
 
-    this.loader = new Asteroids.Loader(lcanvas, rcanvas, midcanvas);
-
-    //fix this!
-    this.canvas = {
-      width: lcanvas.width,
-      height: lcanvas.height,
-      getContext: function() {
-        return lcanvas.getContext('2d');
-      }
-    }
-
     this.turnNo = 1;
     this.score = 0;
 
+    this.canvas = targetCanvas;
     Game.DIM_X = this.canvas.width;
     Game.DIM_Y = this.canvas.height;
+
+    this.isMultiplayer = isMultiplayer || false;
+
   }
 
   Game.SPEED = 20;
@@ -197,6 +191,17 @@
 
   }
 
+  Game.prototype.getGameInfo = function() {
+    var data = {
+      asteroids: this.asteroids,
+      ship: this.ship,
+      bullets: this.bullets,
+      score: this.score
+    };
+
+    return JSON.stringify(data);
+  }
+
   Game.prototype.step = function(ctx){
     this.turnNo += 1
     this.bullet_cooldown -= 1;
@@ -209,10 +214,10 @@
     this.draw.call(this, ctx);
     this.checkCollisions();
 
-
-    //multiplayer stuff
-    //Trigger an event instead?
-    root.openConnection.sendGameInfo();
+    if (this.isMultiplayer) {
+      var gameInfo = this.getGameInfo();
+      root.openConnection.sendGameInfo(gameInfo);
+    }
   }
 
 

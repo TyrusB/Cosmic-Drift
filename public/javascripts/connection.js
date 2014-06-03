@@ -3,27 +3,28 @@
     this.socket = socket;
   }
 
-  Connection.prototype.sendGameInfo = function() {
-    var data = this.getGameInfo();
-    this.socket.emit('game_info', data);
-    // console.log('info_sent');
-    // console.log(data);
-
+  Connection.prototype.sendGameInfo = function(gameInfo) {
+    this.socket.emit('game_info', gameInfo);
   }
 
   Connection.prototype.indicateReady = function() {
     this.socket.emit('player_ready');
   }
 
-  //Can tweak to optimize the data that's being sent over.
-  Connection.prototype.getGameInfo = function() {
-    //better way of accessing this?
-    var data = JSON.stringify({
-      asteroids: window.game.asteroids,
-      ship: window.game.ship,
-      bullets: window.game.bullets,
-      score: window.game.score
+  Connection.prototype.beginListening = function(otherGameCanvas) {
+    var otherContext = otherGameCanvas.getContext('2d'),
+        otherGame = new Asteroids.Game(otherGameCanvas);
+
+
+    this.socket.on('other_game', function(transmittedData) {
+      var otherPlayerInfo = JSON.parse(transmittedData);
+      $.extend(otherGame, otherPlayerInfo);
+      otherGame.drawOther(otherContext); 
     });
-    return data;
   }
+
+  Connection.prototype.endListening = function() {
+    this.socket.removeAllListeners('other_game');
+  }
+
 })(this)
