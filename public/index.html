@@ -6,30 +6,36 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src='javascripts/connection.js'></script>
     <script src='javascripts/socket_listener.js'></script>
+    <script src='javascripts/javascript-state-machine.min.js'></script>
     <script src="javascripts/cosmic_drift_game/keymaster.js"></script>
     <script src='javascripts/cosmic_drift_game/inherits.js'></script>
     <script src='javascripts/cosmic_drift_game/moving_object.js'></script>
+    <script src='javascripts/cosmic_drift_game/loader.js'></script>
     <script src='javascripts/cosmic_drift_game/asteroid.js'></script>
     <script src='javascripts/cosmic_drift_game/ship.js'></script>
     <script src='javascripts/cosmic_drift_game/bullet.js'></script>
     <script src='javascripts/cosmic_drift_game/game.js'></script>
 </head>
 <body>
-    <div class='game-holder'>
-        <canvas id="canvas" width="500" height="500"></canvas>
-    </div>
-    <div class='game-holder'>
-        <canvas id='other_player_canvas' width='500' height='500'></canvas>
+    <div id='canvas-holder'>
+        <canvas class='two-screen' id="lcanvas" width="500" height="500"></canvas>
+
+        <canvas class='two-screen' id='rcanvas' width='500' height='500'></canvas>
+
+        <canvas class='one-screen' id='midcanvas' width='1000' height='500'></canvas>
     </div>
 
     <script>
-        var canvas = document.getElementById("canvas");
+        var midcanvas = document.getElementById("midcanvas"),
+            lcanvas = document.getElementById('lcanvas'),
+            rcanvas = document.getElementById('rcanvas');
+
         var spaceBackground = new Image();
         spaceBackground.src = "images/space.jpg";
 
         spaceBackground.onload = function() {
-            game = new Asteroids.Game(canvas);
-            game.loadInstructions();
+            game = new Asteroids.Game(lcanvas, rcanvas, midcanvas);
+            game.loader.gameState.scrollIntro();
         };
 
 
@@ -43,13 +49,22 @@ body h1 {
   color: yellow;
 }
 
-.game-holder {
+.two-screen {
     margin-left: 20px;
     margin-right: auto;
-    margin-top: 2%;
     width: 500px;
     height: 500px;
     float: left;
+    display: none;
+}
+
+
+#canvas-holder {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-left: -500px;
+    margin-top: -250px;
 }
 
 canvas {

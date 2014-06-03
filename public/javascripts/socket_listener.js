@@ -3,7 +3,7 @@ $(function() {
   var connection = new Connection(socket);
   window.openConnection = connection;
   
-  var other_canvas = document.getElementById('other_player_canvas');
+  var other_canvas = document.getElementById('rcanvas');
   var other_context = other_canvas.getContext('2d'),
       otherGame = new Asteroids.Game(other_canvas);
 

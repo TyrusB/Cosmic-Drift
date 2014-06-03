@@ -1,17 +1,19 @@
 (function(root){
   var Asteroids = root.Asteroids = (root.Asteroids || {} )
 
-  var Game = Asteroids.Game = function (canvas) {
+  var Game = Asteroids.Game = function (lcanvas, rcanvas, midcanvas) {
     this.asteroids = [];
     this.bullets = [];
     this.ship = null;
 
+    this.loader = new Asteroids.Loader(lcanvas, rcanvas, midcanvas);
+
     //fix this!
     this.canvas = {
-      width: canvas.width,
-      height: canvas.height,
+      width: lcanvas.width,
+      height: lcanvas.height,
       getContext: function() {
-        return canvas.getContext('2d');
+        return lcanvas.getContext('2d');
       }
     }
 
