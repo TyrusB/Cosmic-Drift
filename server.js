@@ -14,7 +14,7 @@ var server = http.createServer(function (request, response) {
       }
     });
   }).resume();
-}).listen(process.env.port || 8080);
+}).listen(process.env.PORT || 8080);
 
 require('./lib/socket_server').createConnection(server);
 
