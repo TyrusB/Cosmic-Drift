@@ -16,9 +16,14 @@
         { name: 'onePlayer',       from: 'playerSelect',    to: 'singlePlayerGame'   },
         { name: 'twoPlayers',      from: 'playerSelect',    to: 'waitingForOther'    },
         { name: 'allPlayersReady', from: 'waitingForOther', to: 'countdown'          },
-        { name: 'countdownDone',   from: 'countdown',       to: 'playingMultiplayerGame'        },
-        { name: 'gameWon',        from: 'playingMultiplayerGame', to: 'windingDownWon'        },
-        { name: 'gameLost',       from: 'playingGame',       to: 'windingDownLost'        },
+        { name: 'countdownDone',   from: 'countdown',       to: 'multiplayerGame'        },
+
+        { name: 'crashed', from: 'singlePlayerGame', to: 'singlePlayerCredits'},
+        { name: 'creditsDone', from: 'singlePlayerCredits', to: 'playerSelect'},
+
+        { name: 'gameWon',        from: 'multiplayerGame', to: 'windingDownWon'        },
+        { name: 'gameLost',       from: 'multiplayerGame',   to: 'windingDownLost'        },
+        { name: 'gameLost',       from: 'singlePlayerGame',   to: 'spEndingCredits'        },
         { name: 'gameOver',   from: 'windingDownLost',       to: 'endingScreen'        },
         { name: 'gameOver',   from: 'windingDownWon',       to: 'endingScreen'        }
       ],
@@ -137,6 +142,58 @@
           loader.game.start();
         },
 
+        onsinglePlayerCredits: function() {
+          var maxFrames = 100;
+          key.setScope('ending');
+          
+          var frameNo = 0;
+          var ctx = loader.midcanvas.getContext('2d');
+          var center_x = loader.midcanvas.width / 2,
+              center_y = loader.midcanvas.height / 2,
+              canvasWidth = loader.midcanvas.width,
+              canvasHeight = loader.midcanvas.height;
+
+          var loadFrame = function() {
+            ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+            if (frameNo < 4) {
+              ctx.beginPath();
+              ctx.fillStyle = 'red';
+              ctx.rect(0, 0, canvasWidth, canvasHeight);
+              ctx.fill();
+            } else if (frameNo < 10) {
+              
+            } else if (frameNo < 15) {
+              ctx.beginPath();
+              ctx.fillStyle = 'red';
+              ctx.rect(0, 0, canvasWidth, canvasHeight);
+              ctx.fill();
+            } else if (frameNo < maxFrames + 15) {
+              ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+              ctx.font = '65pt Calibri';
+              ctx.textAlign = 'center';
+              ctx.fillStyle = 'yellow';
+              ctx.fillText('Game Over', center_x, center_y - 100 + (maxFrames - frameNo - 15) / maxFrames * 400);
+              ctx.font = '30pt Calibri';
+              ctx.fillStyle = 'white';
+              ctx.fillText('Final Score:', center_x, center_y  + (maxFrames - frameNo - 15) / maxFrames * 400)
+              ctx.fillText(("" + loader.game.score), center_x, center_y + 50  + (maxFrames - frameNo - 15) / maxFrames * 400)
+              ctx.font = '20pt Calibri';
+              ctx.fillText('Try again? Hit enter to restart...', center_x, center_y + 150  + (maxFrames - frameNo - 15) / maxFrames * 400)
+            }
+
+            frameNo = Math.min(frameNo + 1, maxFrames)
+
+          }
+
+          var ending = setInterval(loadFrame, 40);     
+
+          key('enter', 'ending', function() {
+            clearInterval(ending);
+            loader.game = null;
+            loader.gameStateMachine.creditsDone();
+          })  
+        },
+
         onwaitingForOther: function() {
           // var midctx = loader.midcanvas.getContext('2d');
           // midctx.clearRect(0, 0, loader.midcanvas.width, loader.midcanvas.height);
@@ -240,7 +297,9 @@
           loader.game.start();
 
           window.openConnection.beginListening(loader.rcanvas);
-        }
+        },
+
+
       }
     })
 
