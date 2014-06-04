@@ -3,7 +3,6 @@ var http = require('http');
 var fs = require('fs');
 var path = require('path');
 var mime = require('mime');
-var port = process.env.port || 5000;
 
 var file = new static.Server('./public');
 
@@ -15,7 +14,7 @@ var server = http.createServer(function (request, response) {
       }
     });
   }).resume();
-}).listen(port);
+}).listen(process.env.port || 8080);
 
 require('./lib/socket_server').createConnection(server);
 

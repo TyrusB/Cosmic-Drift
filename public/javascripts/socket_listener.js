@@ -1,6 +1,6 @@
 $(function() {
-  var socket = io('http://localhost:8080');
+  var host = location.origin.replace(/^http/, 'ws')
+  var socket = io(host);
   var connection = new Connection(socket);
   window.openConnection = connection;
-  
 });

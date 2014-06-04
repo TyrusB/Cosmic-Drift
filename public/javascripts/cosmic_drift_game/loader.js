@@ -291,7 +291,7 @@
           }, 750)
         },
 
-        onplayingMultiplayerGame: function() {
+        onmultiplayerGame: function() {
           key.setScope('game');
           loader.game = new Asteroids.Game(loader.lcanvas, true);
           loader.game.start();
