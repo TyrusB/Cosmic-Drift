@@ -11,6 +11,10 @@
     this.socket.emit('player_ready');
   }
 
+  Connection.prototype.announceCrash = function() {
+    this.socket.emit('other_player_crashed');
+  }
+
   Connection.prototype.beginListening = function(otherGameCanvas) {
     var otherContext = otherGameCanvas.getContext('2d'),
         otherGame = new Asteroids.Game(otherGameCanvas);
@@ -21,6 +25,10 @@
       $.extend(otherGame, otherPlayerInfo);
       otherGame.drawOther(otherContext); 
     });
+
+    this.socket.on('other_player_crashed', function() {
+      window.loader.gameStateMachine.otherPlayerCrashed();
+    })
   }
 
   Connection.prototype.endListening = function() {

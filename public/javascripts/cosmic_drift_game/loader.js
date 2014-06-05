@@ -11,21 +11,38 @@
     var loader = this;
     this.gameStateMachine = StateMachine.create({
       events: [
+        //Beginning events: Title scroll
         { name: 'scrollIntro',     from: 'none',            to: 'intro'              },
         { name: 'finishedIntro',   from: 'intro',           to: 'playerSelect'       },
+
+        //Events triggered once player chooses single or multi player
         { name: 'onePlayer',       from: 'playerSelect',    to: 'singlePlayerGame'   },
         { name: 'twoPlayers',      from: 'playerSelect',    to: 'waitingForOther'    },
+
+        //Events triggered when waiting for another player to connect in multi-player
         { name: 'allPlayersReady', from: 'waitingForOther', to: 'countdown'          },
         { name: 'countdownDone',   from: 'countdown',       to: 'multiplayerGame'        },
 
+        //Events for single player game/post-game
         { name: 'crashed', from: 'singlePlayerGame', to: 'singlePlayerCredits'},
         { name: 'creditsDone', from: 'singlePlayerCredits', to: 'playerSelect'},
 
-        { name: 'gameWon',        from: 'multiplayerGame', to: 'windingDownWon'        },
-        { name: 'gameLost',       from: 'multiplayerGame',   to: 'windingDownLost'        },
-        { name: 'gameLost',       from: 'singlePlayerGame',   to: 'spEndingCredits'        },
-        { name: 'gameOver',   from: 'windingDownLost',       to: 'endingScreen'        },
-        { name: 'gameOver',   from: 'windingDownWon',       to: 'endingScreen'        }
+        //Events from multi-player game to trigger a winding down screen on the surviving player 
+        // when the other player crashes.
+        { name: 'crashed',        from: 'multiplayerGame', to: 'windingDownLost'        },
+        { name: 'otherPlayerCrashed',       from: 'multiplayerGame',   to: 'windingDownWon' },
+
+        // Events that end the game if the surviving player crashes before the timer winds down.
+        // note: the surviving player gets an extra 10 seconds to rack up the score... or go down trying to do so.
+        { name: 'crashed', from: 'windingDownWon', to: 'endingScreen' },
+        { name: 'otherPlayerCrashed', from: 'windingDownLost', to: 'endingScreen'},
+        
+        //Events that trigger the ending screen if the surviving player runs out of extra time.
+        { name: 'bonusTimerDone', from: 'windingDownWon', to: 'endingScreen'},
+        { name: 'bonusTimerDone', from: 'windingDownWon', to: 'endingScreen'},
+
+        { name: 'endingScreenDone', from: 'endingScreen', to: 'playerSelect' }
+
       ],
       callbacks: {
         onscrollIntro: function(event, from, to) {
@@ -297,6 +314,18 @@
           loader.game.start();
 
           window.openConnection.beginListening(loader.rcanvas);
+        },
+
+        onwindingDownWon: function() {
+
+        },
+
+        onwindingDownLost: function() {
+
+        },
+
+        onendingScreen: function() {
+
         },
 
 
