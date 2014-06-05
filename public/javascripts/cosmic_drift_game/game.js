@@ -119,21 +119,21 @@
 
 
   Game.prototype.checkCollisions = function() {
-    var that = this;
+    var game = this;
     //check if ship has collided with asteroids
     var crashed = this.asteroids.some( function (el) {
-      return el.isCollidedWith(that.ship);
+      return el.isCollidedWith(game.ship);
     });
 
-    if(crashed){
-      that.stop();
-      root.loader.gameStateMachine.crashed();
-      root.openConnection.announceCrash();
-    }
+    // if(crashed){
+    //   game.stop();
+    //   root.loader.gameStateMachine.crashed();
+    //   root.openConnection.announceCrash(game.score);
+    // }
 
     //check for bullet/asteroid collisions
     this.bullets.forEach( function(bullet) {
-      bullet.hitAsteroids(that);
+      bullet.hitAsteroids(game);
     })
   }
 

@@ -11,8 +11,8 @@
     this.socket.emit('player_ready');
   }
 
-  Connection.prototype.announceCrash = function() {
-    this.socket.emit('other_player_crashed');
+  Connection.prototype.announceCrash = function(score) {
+    this.socket.emit('player_crashed', score);
   }
 
   Connection.prototype.beginListening = function(otherGameCanvas) {
@@ -26,7 +26,7 @@
       otherGame.drawOther(otherContext); 
     });
 
-    this.socket.on('other_player_crashed', function() {
+    this.socket.on('other_player_crashed', function(score) {
       window.loader.gameStateMachine.otherPlayerCrashed();
     })
   }
