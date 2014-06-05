@@ -15,9 +15,9 @@
     var otherContext = otherGameCanvas.getContext('2d'),
         otherGame = new Asteroids.Game(otherGameCanvas);
 
-
     this.socket.on('other_game', function(transmittedData) {
       var otherPlayerInfo = JSON.parse(transmittedData);
+      otherPlayerInfo.ship.color = 'blue';
       $.extend(otherGame, otherPlayerInfo);
       otherGame.drawOther(otherContext); 
     });
