@@ -125,10 +125,10 @@
       return el.isCollidedWith(that.ship);
     });
 
-    if(crashed){
-      that.stop();
-      root.loader.gameStateMachine.crashed();
-    }
+    // if(crashed){
+    //   that.stop();
+    //   root.loader.gameStateMachine.crashed();
+    // }
 
     //check for bullet/asteroid collisions
     this.bullets.forEach( function(bullet) {
