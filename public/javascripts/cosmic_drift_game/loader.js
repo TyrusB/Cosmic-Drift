@@ -144,6 +144,7 @@
           })
 
           key('enter', 'playerSelect', function() {
+            key.setScope('null');
             if (selector === 'single') {
               loader.gameStateMachine.onePlayer();
             } else if (selector === 'multi') {
@@ -206,6 +207,7 @@
           key('enter', 'spending', function() {
             clearInterval(ending);
             delete loader.game;
+            key.setScope('null');
             loader.gameStateMachine.creditsDone();
           })  
         },
@@ -471,6 +473,7 @@
 
           key('enter', 'mpending', function() {
             delete loader.game;
+            key.setScope('null');
             loader.gameStateMachine.endingScreenDone();
           })  
         },

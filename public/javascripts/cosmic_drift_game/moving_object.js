@@ -8,8 +8,8 @@
     this.vy = vy;
     this.radius = radius;
     this.color = color;
-    this.board_x = Asteroids.Game.DIM_X + Asteroids.Asteroid.RADIUS;
-    this.board_y = Asteroids.Game.DIM_Y + Asteroids.Asteroid.RADIUS;
+    this.board_x = root.loader.game.DIM_X + Asteroids.Asteroid.RADIUS;
+    this.board_y = root.loader.game.DIM_Y + Asteroids.Asteroid.RADIUS;
   }
 
   MovingObject.prototype.move = function() {

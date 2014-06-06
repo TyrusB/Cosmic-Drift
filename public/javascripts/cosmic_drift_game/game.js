@@ -11,8 +11,8 @@
     this.score = 0;
 
     this.canvas = targetCanvas;
-    Game.DIM_X = this.canvas.width;
-    Game.DIM_Y = this.canvas.height;
+    this.DIM_X = this.canvas.width;
+    this.DIM_Y = this.canvas.height;
 
     this.isMultiplayer = isMultiplayer || false;
     this.numAsteroids = this.isMultiplayer ? Game.MP_NUM_ASTEROIDS : Game.SP_NUM_ASTEROIDS;
@@ -30,26 +30,26 @@
 
   Game.prototype.addAsteroids = function (numAsteroids) {
     while (this.asteroids.length < numAsteroids) {
-      var randomAsteroid = Asteroids.Asteroid.randomAsteroid(Game.DIM_X, Game.DIM_Y) 
-      if ( Math.abs(randomAsteroid.posx - Game.DIM_X / 2) > 100 && Math.abs(randomAsteroid.posy - Game.DIM_Y / 2) < 80 ) {
+      var randomAsteroid = Asteroids.Asteroid.randomAsteroid(this.DIM_X, this.DIM_Y) 
+      if ( Math.abs(randomAsteroid.posx - this.DIM_X / 2) > 100 && Math.abs(randomAsteroid.posy - this.DIM_Y / 2) < 80 ) {
         this.asteroids.push( randomAsteroid );
       }
     }
   }
 
   Game.prototype.replenishAsteroids = function() {
-    if (this.turnNo % 20 == 0 && this.asteroids.length < Game.ASTEROIDS) {
-        this.asteroids.push( Asteroids.Asteroid.edgeAsteroid(Game.DIM_X, Game.DIM_Y));
+    if (this.turnNo % 20 === 0 && this.asteroids.length < this.numAsteroids) {
+        this.asteroids.push( Asteroids.Asteroid.edgeAsteroid(this.DIM_X, this.DIM_Y));
     }
   }
 
 
   Game.prototype.addShips = function() {
-    this.ship = new Asteroids.Ship(Game.DIM_X, Game.DIM_Y);
+    this.ship = new Asteroids.Ship(this.DIM_X, this.DIM_Y);
   }
 
   Game.prototype.draw = function (ctx) {
-    ctx.clearRect(0, 0, Game.DIM_X, Game.DIM_Y);
+    ctx.clearRect(0, 0, this.DIM_X, this.DIM_Y);
 
     this.asteroids.forEach( function (el) {
       el.draw(ctx);
@@ -64,7 +64,7 @@
   }
 
   Game.prototype.drawOther = function (ctx) {
-    ctx.clearRect(0, 0, Game.DIM_X, Game.DIM_Y);
+    ctx.clearRect(0, 0, this.DIM_X, this.DIM_Y);
 
     this.asteroids.forEach( function (el) {
       Asteroids.Asteroid.prototype.draw.call(el, ctx);
@@ -92,7 +92,7 @@
   }
 
   Game.prototype.drawScore = function(ctx) {
-    var scorex = Game.DIM_X - 30;
+    var scorex = this.DIM_X - 30;
     var scorey = 30;
 
     ctx.font = '30pt Calibri';
@@ -245,7 +245,7 @@
         center_y = canvas.height / 2;
 
     var scrollIntroText = function() {
-      ctx.clearRect(0, 0, Game.DIM_X, Game.DIM_Y);
+      ctx.clearRect(0, 0, this.DIM_X, this.DIM_Y);
       ctx.font = '65pt Calibri';
       ctx.textAlign = 'center';
       ctx.fillStyle = 'yellow';
@@ -291,21 +291,21 @@
         center_y = canvas.height / 2;
 
     var loadFrame = function() {
-      ctx.clearRect(0, 0, Game.DIM_X, Game.DIM_Y);
+      ctx.clearRect(0, 0, game.DIM_X, game.DIM_Y);
       if (frameNo < 4) {
         ctx.beginPath();
         ctx.fillStyle = 'red';
-        ctx.rect(0, 0, Game.DIM_X, Game.DIM_Y);
+        ctx.rect(0, 0, game.DIM_X, game.DIM_Y);
         ctx.fill();
       } else if (frameNo < 10) {
         
       } else if (frameNo < 15) {
         ctx.beginPath();
         ctx.fillStyle = 'red';
-        ctx.rect(0, 0, Game.DIM_X, Game.DIM_Y);
+        ctx.rect(0, 0, game.DIM_X, game.DIM_Y);
         ctx.fill();
       } else if (frameNo < maxFrames + 15) {
-        ctx.clearRect(0, 0, Game.DIM_X, Game.DIM_Y);
+        ctx.clearRect(0, 0, game.DIM_X, game.DIM_Y);
         ctx.font = '65pt Calibri';
         ctx.textAlign = 'center';
         ctx.fillStyle = 'yellow';
