@@ -317,7 +317,7 @@
         },
 
         onwindingDownWon: function() {
-          key.setScope('mpEnding');
+          key.setScope('windingDown');
           
           var frameNo = 0;
           var ctx = loader.rcanvas.getContext('2d');
@@ -328,7 +328,7 @@
 
           var ending = setInterval(function() {
             ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-            if (frameNo < 4) {
+            if (frameNo < 5) {
               ctx.beginPath();
               ctx.fillStyle = 'red';
               ctx.rect(0, 0, canvasWidth, canvasHeight);
@@ -341,7 +341,8 @@
               ctx.rect(0, 0, canvasWidth, canvasHeight);
               ctx.fill();
             } else {
-              var countdownNum = 10 - parseInt((frameNo - 15) / 200);
+              // Should probably be 200
+              var countdownNum = 10 - parseInt((frameNo - 15) / 20);
 
               if (countdownNum >= 0) {
                 ctx.clearRect(0, 0, canvasWidth, canvasHeight);
@@ -374,7 +375,60 @@
         },
 
         onwindingDownLost: function() {
+          key.setScope('windingDown');
+          
+          var frameNo = 0;
+          var ctx = loader.lcanvas.getContext('2d');
+          var center_x = loader.rcanvas.width / 2,
+              center_y = loader.rcanvas.height / 2,
+              canvasWidth = loader.rcanvas.width,
+              canvasHeight = loader.rcanvas.height;
 
+          var ending = setInterval(function() {
+            ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+            if (frameNo < 4) {
+              ctx.beginPath();
+              ctx.fillStyle = 'red';
+              ctx.rect(0, 0, canvasWidth, canvasHeight);
+              ctx.fill();
+            } else if (frameNo < 10) {
+              
+            } else if (frameNo < 15) {
+              ctx.beginPath();
+              ctx.fillStyle = 'red';
+              ctx.rect(0, 0, canvasWidth, canvasHeight);
+              ctx.fill();
+            } else {
+              var countdownNum = 10 - parseInt((frameNo - 15) / 20);
+
+              if (countdownNum >= 0) {
+                ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+                ctx.beginPath();
+                ctx.font = '20pt Calibri';
+                ctx.textAlign = 'center';
+                ctx.fillStyle = 'red';
+                ctx.fillText("You've crashed!", center_x, center_y - 200);
+                ctx.fillText("Bonus time remaining: ", center_x, center_y - 180);
+        
+                ctx.font = '40pt Calibri';
+                ctx.textAlign = 'center';
+                ctx.fillStyle = 'red';
+                ctx.fillText(countdownNum, center_x, center_y);
+              } else {
+                clearInterval(ending);
+                delete loader.ending
+                loader.gameStateMachine.bonusTimerDone();
+              }
+            }
+            frameNo++;
+          }, 50);
+
+          loader.ending = ending;
+        },
+
+        onleavewindingDownLost: function() {
+          clearInterval(loader.ending);
+          delete loader.ending
         },
 
         onendingScreen: function() {
@@ -395,53 +449,28 @@
           rctx.clearRect(0, 0, loader.rcanvas.width, loader.rcanvas.height);
 
           // Handle the display of the ending text
-
-          var maxFrames = 100;
           key.setScope('ending');
           
-          var frameNo = 0;
           var ctx = loader.midcanvas.getContext('2d');
           var center_x = loader.midcanvas.width / 2,
               center_y = loader.midcanvas.height / 2,
               canvasWidth = loader.midcanvas.width,
               canvasHeight = loader.midcanvas.height;
 
-          var loadFrame = function() {
-            ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-            if (frameNo < 4) {
-              ctx.beginPath();
-              ctx.fillStyle = 'red';
-              ctx.rect(0, 0, canvasWidth, canvasHeight);
-              ctx.fill();
-            } else if (frameNo < 10) {
-              
-            } else if (frameNo < 15) {
-              ctx.beginPath();
-              ctx.fillStyle = 'red';
-              ctx.rect(0, 0, canvasWidth, canvasHeight);
-              ctx.fill();
-            } else if (frameNo < maxFrames + 15) {
-              ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-              ctx.font = '65pt Calibri';
-              ctx.textAlign = 'center';
-              ctx.fillStyle = 'yellow';
-              ctx.fillText('Game Over', center_x, center_y - 100 + (maxFrames - frameNo - 15) / maxFrames * 400);
-              ctx.font = '30pt Calibri';
-              ctx.fillStyle = 'white';
-              ctx.fillText('Final Score:', center_x, center_y  + (maxFrames - frameNo - 15) / maxFrames * 400)
-              ctx.fillText(("" + loader.game.score), center_x, center_y + 50  + (maxFrames - frameNo - 15) / maxFrames * 400)
-              ctx.font = '20pt Calibri';
-              ctx.fillText('Try again? Hit enter to restart...', center_x, center_y + 150  + (maxFrames - frameNo - 15) / maxFrames * 400)
-            }
-
-            frameNo = Math.min(frameNo + 1, maxFrames)
-
-          }
-
-          var ending = setInterval(loadFrame, 40);     
+          ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+          ctx.font = '65pt Calibri';
+          ctx.textAlign = 'center';
+          ctx.fillStyle = 'yellow';
+          ctx.fillText('Game Over', center_x, center_y - 100);
+          ctx.font = '30pt Calibri';
+          ctx.fillStyle = 'white';
+          ctx.fillText('Player __ Wins!', center_x, center_y)
+          ctx.fillText('Margin of Victory: ', center_x, center_y + 50)
+          ctx.fillText('___ ', center_x, center_y + 100)
+          ctx.font = '20pt Calibri';
+          ctx.fillText('Try again? Hit enter to restart...', center_x, center_y + 150)   
 
           key('enter', 'ending', function() {
-            clearInterval(ending);
             delete loader.game;
             loader.gameStateMachine.endingScreenDone();
           })  

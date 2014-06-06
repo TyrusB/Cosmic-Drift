@@ -15,11 +15,13 @@
     Game.DIM_Y = this.canvas.height;
 
     this.isMultiplayer = isMultiplayer || false;
+    this.numAsteroids = this.isMultiplayer ? Game.MP_NUM_ASTEROIDS : Game.SP_NUM_ASTEROIDS;
 
   }
 
   Game.SPEED = 20;
-  Game.ASTEROIDS = 10;
+  Game.SP_NUM_ASTEROIDS = 10;
+  Game.MP_NUM_ASTEROIDS = 5;
   Game.THRUST_POWER = 0.25;
   Game.HANDLE_TWEAK = 1.0;
   Game.MAX_THRUST = 5.0;
@@ -125,11 +127,11 @@
       return el.isCollidedWith(game.ship);
     });
 
-    // if(crashed){
-    //   game.stop();
-    //   root.loader.gameStateMachine.crashed();
-    //   root.openConnection.announceCrash(game.score);
-    // }
+    if(crashed){
+      game.stop();
+      root.loader.gameStateMachine.crashed();
+      root.openConnection.announceCrash(game.score);
+    }
 
     //check for bullet/asteroid collisions
     this.bullets.forEach( function(bullet) {
@@ -227,7 +229,7 @@
   }
 
   Game.prototype.start = function() {
-    this.addAsteroids(Game.ASTEROIDS);
+    this.addAsteroids(this.numAsteroids);
     this.addShips();
     this.bindKeyHandlers();
     var context = this.canvas.getContext('2d');
