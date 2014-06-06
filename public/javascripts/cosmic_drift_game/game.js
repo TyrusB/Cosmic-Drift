@@ -81,7 +81,7 @@
   Game.prototype.move = function () {
     this.asteroids.forEach( function(el) {
       el.move();
-      el.rotation = (el.rotation += 0.1) % 360;
+      el.rotation = parseFloat(((el.rotation += 0.1) % 360).toFixed(2));
     });
 
     this.bullets.forEach( function(el) {

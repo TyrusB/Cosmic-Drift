@@ -19,16 +19,16 @@
   Asteroid.MIN_VEL = 1.0;
 
   Asteroid.randomBetween = function(min, max) {
-    return ( Math.random() * (max - min) + min );
+    return parseFloat(( Math.random() * (max - min) + min ).toFixed(2));
   }
 
   Asteroid.randomAsteroid = function(dimX, dimY) {
-    var posx = Math.random() * dimX;
-    var posy = Math.random() * dimY;
+    var posx = parseFloat((Math.random() * dimX).toFixed(2));
+    var posy = parseFloat((Math.random() * dimY).toFixed(2));
     var vx = Asteroid.randomBetween(Asteroid.MIN_VEL, Asteroid.MAX_VEL) * (Math.random() < 0.5 ? -1 : 1);
     var vy = Asteroid.randomBetween(Asteroid.MIN_VEL, Asteroid.MAX_VEL) * (Math.random() < 0.5 ? -1 : 1);
 
-    var radius = Asteroid.randomBetween(Asteroid.MIN_RADIUS, Asteroid.MAX_RADIUS);
+    var radius = parseInt(Asteroid.randomBetween(Asteroid.MIN_RADIUS, Asteroid.MAX_RADIUS));
 
     return new Asteroid(posx, posy, vx, vy, radius, Asteroid.COLOR);
   }
@@ -36,8 +36,8 @@
   Asteroid.edgeAsteroid = function(dimX, dimY) {
     var randomSign = (Math.random() > 0.5 ? 1 : -1 )
 
-    var posx = Math.random() * 10 * randomSign;
-    var posy = Math.random() * 10 * randomSign;
+    var posx = parseFloat((Math.random() * 10 * randomSign).toFixed(2));
+    var posy = parseFloat((Math.random() * 10 * randomSign).toFixed(2));
     var vx = ((Asteroid.MAX_VEL - Asteroid.MIN_VEL) * Math.random() + Asteroid.MIN_VEL) * (Math.random() < 0.5 ? -1 : 1);
     var vy = ((Asteroid.MAX_VEL - Asteroid.MIN_VEL) * Math.random() + Asteroid.MIN_VEL) * (Math.random() < 0.5 ? -1 : 1);
     

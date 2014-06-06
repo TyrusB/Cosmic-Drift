@@ -29,6 +29,8 @@
       this.posy = this.posy + this.vy
     }
 
+    this.posy = parseFloat(this.posy.toFixed(2));
+    this.posx = parseFloat(this.posx.toFixed(2));
   }
 
   MovingObject.prototype.draw = function(ctx){
