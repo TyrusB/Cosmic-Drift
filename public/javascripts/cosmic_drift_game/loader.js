@@ -39,7 +39,7 @@
         
         //Events that trigger the ending screen if the surviving player runs out of extra time.
         { name: 'bonusTimerDone', from: 'windingDownWon', to: 'endingScreen'},
-        { name: 'bonusTimerDone', from: 'windingDownWon', to: 'endingScreen'},
+        { name: 'bonusTimerDone', from: 'windingDownLost', to: 'endingScreen'},
 
         { name: 'endingScreenDone', from: 'endingScreen', to: 'playerSelect' }
 
@@ -89,6 +89,8 @@
         },
 
         onplayerSelect: function() {
+          key.setScope('playerSelect');
+
           var ctx = loader.midcanvas.getContext('2d');
           var center_x = midcanvas.width / 2,
               center_y = midcanvas.height / 2;
@@ -110,9 +112,6 @@
           
           ctx.clearRect(0, 0, loader.midcanvas.width, loader.midcanvas.height);
           drawPlayerSelection();
-          
-
-          key.setScope('playerSelect');
 
           key('up', 'playerSelect', function() {
             ctx.clearRect(0, 0, loader.midcanvas.width, loader.midcanvas.height);
@@ -161,7 +160,7 @@
 
         onsinglePlayerCredits: function() {
           var maxFrames = 100;
-          key.setScope('ending');
+          key.setScope('spending');
           
           var frameNo = 0;
           var ctx = loader.midcanvas.getContext('2d');
@@ -204,7 +203,7 @@
 
           var ending = setInterval(loadFrame, 40);     
 
-          key('enter', 'ending', function() {
+          key('enter', 'spending', function() {
             clearInterval(ending);
             delete loader.game;
             loader.gameStateMachine.creditsDone();
@@ -449,7 +448,7 @@
           rctx.clearRect(0, 0, loader.rcanvas.width, loader.rcanvas.height);
 
           // Handle the display of the ending text
-          key.setScope('ending');
+          key.setScope('mpending');
           
           var ctx = loader.midcanvas.getContext('2d');
           var center_x = loader.midcanvas.width / 2,
@@ -470,7 +469,7 @@
           ctx.font = '20pt Calibri';
           ctx.fillText('Try again? Hit enter to restart...', center_x, center_y + 150)   
 
-          key('enter', 'ending', function() {
+          key('enter', 'mpending', function() {
             delete loader.game;
             loader.gameStateMachine.endingScreenDone();
           })  
