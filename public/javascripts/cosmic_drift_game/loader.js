@@ -111,7 +111,16 @@
           }
           
           ctx.clearRect(0, 0, loader.midcanvas.width, loader.midcanvas.height);
+          ctx.beginPath();
+          ctx.rect(center_x - 150, center_y - 50, 300, 75);
+          ctx.strokeStyle = 'white';
+          ctx.stroke();
+          ctx.fillStyle = 'yellow';
+          ctx.fill();
+
           drawPlayerSelection();
+
+          selector = 'single';
 
           key('up', 'playerSelect', function() {
             ctx.clearRect(0, 0, loader.midcanvas.width, loader.midcanvas.height);
