@@ -19,12 +19,16 @@
 
   }
 
+  //Game Configuration settings
   Game.SPEED = 20;
   Game.SP_NUM_ASTEROIDS = 10;
   Game.MP_NUM_ASTEROIDS = 5;
   Game.THRUST_POWER = 0.25;
   Game.HANDLE_TWEAK = 1.0;
   Game.MAX_THRUST = 5.0;
+
+  //Debug Settings
+  Game.COLLISIONS_ON = true;
 
 
 
@@ -78,6 +82,43 @@
     this.drawScore(ctx);
   }
 
+  // Should only be called the first time other player's data is received
+  Game.prototype.predictMovements = function(ctx) {  
+    this.predictHandle = setInterval( this.predictStep.bind(this, ctx), Game.SPEED );  
+  }
+
+  Game.prototype.predictStep = function(ctx) {
+    //Move Phase
+    this.asteroids.forEach(function(asteroid) {
+      Asteroids.Asteroid.prototype.move.call(asteroid, ctx);
+    })
+
+    this.bullets.forEach( function (el) {
+      Asteroids.Bullet.prototype.move.call(el, ctx);
+    });
+
+    Asteroids.Ship.prototype.move.call(this.ship, ctx);
+    
+    //Draw Phase
+    this.drawOther.call(this, ctx);
+    this.drawScore(ctx);
+
+    //Remove out of range bullets
+    this.checkBoundaries.call(this);
+
+    //Collision Check
+    var game = this;
+    this.bullets.forEach( function(bullet) {
+      Asteroids.Bullet.prorotype.hitAsteroids.call(bullet, game);
+    })
+    
+  }
+
+  Game.prototype.stopPredictions = function() {
+    clearInterval(this.predictHandle);
+    delete this.predictHandle;
+  }
+
   Game.prototype.move = function () {
     this.asteroids.forEach( function(el) {
       el.move();
@@ -120,14 +161,14 @@
   }
 
 
-  Game.prototype.checkCollisions = function() {
+  Game.prototype.checkCollisions = function(shipCrashOn) {
     var game = this;
     //check if ship has collided with asteroids
     var crashed = this.asteroids.some( function (el) {
       return el.isCollidedWith(game.ship);
     });
 
-    if(crashed){
+    if(shipCrashOn && crashed){
       game.stop();
       root.loader.gameStateMachine.crashed();
       root.openConnection.announceCrash(game.score);
@@ -215,9 +256,9 @@
     this.move.call(this);
     this.checkBoundaries.call(this);
     this.draw.call(this, ctx);
-    this.checkCollisions();
+    this.checkCollisions(Game.COLLISIONS_ON);
 
-    if (this.isMultiplayer) {
+    if (this.isMultiplayer && (this.turnNo % 4 === 0) ) {
       var gameInfo = this.getGameInfo();
       root.openConnection.sendGameInfo(gameInfo);
     }

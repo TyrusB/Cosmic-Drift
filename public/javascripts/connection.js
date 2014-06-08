@@ -17,16 +17,23 @@
 
   Connection.prototype.beginListening = function(otherGameCanvas) {
     var otherContext = otherGameCanvas.getContext('2d'),
-        otherGame = new Asteroids.Game(otherGameCanvas);
+        otherGame = new Asteroids.Game(otherGameCanvas),
+        gameLoaded = false;
 
     this.socket.on('other_game', function(transmittedData) {
+      //Only call this the first time you receive other player data
+      if (!gameLoaded) {
+        gameLoaded = true;
+        otherGame.predictMovements(otherContext);
+      }
+
       var otherPlayerInfo = JSON.parse(transmittedData);
       otherPlayerInfo.ship.color = 'blue';
       $.extend(otherGame, otherPlayerInfo);
-      otherGame.drawOther(otherContext); 
     });
 
     this.socket.on('other_player_crashed', function(score) {
+      otherGame.stopPredictions();
       window.loader.gameStateMachine.otherPlayerCrashed();
     })
   }
