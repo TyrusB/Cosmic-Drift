@@ -153,6 +153,7 @@
           })
 
           key('enter', 'playerSelect', function() {
+            ctx.clearRect(0, 0, loader.midcanvas.width, loader.midcanvas.height);
             key.setScope('null');
             if (selector === 'single') {
               loader.gameStateMachine.onePlayer();
@@ -211,10 +212,10 @@
 
           }
 
-          var ending = setInterval(loadFrame, 40);     
+          var spending = setInterval(loadFrame, 40);     
 
           key('enter', 'spending', function() {
-            clearInterval(ending);
+            clearInterval(spending);
             delete loader.game;
             key.setScope('null');
             loader.gameStateMachine.creditsDone();
@@ -336,7 +337,7 @@
               canvasWidth = loader.rcanvas.width,
               canvasHeight = loader.rcanvas.height;
 
-          var ending = setInterval(function() {
+          var windingDownRScreen = setInterval(function() {
             ctx.clearRect(0, 0, canvasWidth, canvasHeight);
             if (frameNo < 5) {
               ctx.beginPath();
@@ -368,7 +369,7 @@
                 ctx.fillStyle = 'red';
                 ctx.fillText(countdownNum, center_x, center_y);
               } else {
-                clearInterval(ending);
+                clearInterval(windingDownRScreen);
                 delete loader.ending
                 loader.gameStateMachine.bonusTimerDone();
               }
@@ -376,7 +377,7 @@
             frameNo++;
           }, 50);
 
-          loader.ending = ending;
+          loader.ending = windingDownRScreen;
         },
 
         onleavewindingDownWon: function() {
@@ -394,7 +395,7 @@
               canvasWidth = loader.rcanvas.width,
               canvasHeight = loader.rcanvas.height;
 
-          var ending = setInterval(function() {
+          var windingDownLScreen = setInterval(function() {
             ctx.clearRect(0, 0, canvasWidth, canvasHeight);
             if (frameNo < 4) {
               ctx.beginPath();
@@ -425,7 +426,7 @@
                 ctx.fillStyle = 'red';
                 ctx.fillText(countdownNum, center_x, center_y);
               } else {
-                clearInterval(ending);
+                clearInterval(windingDownLScreen);
                 delete loader.ending
                 loader.gameStateMachine.bonusTimerDone();
               }
@@ -433,7 +434,7 @@
             frameNo++;
           }, 50);
 
-          loader.ending = ending;
+          loader.ending = windingDownLScreen;
         },
 
         onleavewindingDownLost: function() {
@@ -466,21 +467,40 @@
               center_y = loader.midcanvas.height / 2,
               canvasWidth = loader.midcanvas.width,
               canvasHeight = loader.midcanvas.height;
+          var frameNo = 0;
 
-          ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-          ctx.font = '65pt Calibri';
-          ctx.textAlign = 'center';
-          ctx.fillStyle = 'yellow';
-          ctx.fillText('Game Over', center_x, center_y - 100);
-          ctx.font = '30pt Calibri';
-          ctx.fillStyle = 'white';
-          ctx.fillText('Player __ Wins!', center_x, center_y)
-          ctx.fillText('Margin of Victory: ', center_x, center_y + 50)
-          ctx.fillText('___ ', center_x, center_y + 100)
-          ctx.font = '20pt Calibri';
-          ctx.fillText('Try again? Hit enter to restart...', center_x, center_y + 150)   
+          var ending = setInterval(function() {
+            ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+            if (frameNo < 4) {
+              ctx.beginPath();
+              ctx.fillStyle = 'blue';
+              ctx.rect(0, 0, canvasWidth, canvasHeight);
+              ctx.fill();
+            } else if (frameNo < 10) {
+              
+            } else if (frameNo < 15) {
+              ctx.beginPath();
+              ctx.fillStyle = 'blue';
+              ctx.rect(0, 0, canvasWidth, canvasHeight);
+              ctx.fill();
+            } else {
+              ctx.font = '65pt Calibri';
+              ctx.textAlign = 'center';
+              ctx.fillStyle = 'yellow';
+              ctx.fillText('Game Over', center_x, center_y - 100);
+              ctx.font = '30pt Calibri';
+              ctx.fillStyle = 'white';
+              ctx.fillText('Player __ Wins!', center_x, center_y)
+              ctx.fillText('Margin of Victory: ', center_x, center_y + 50)
+              ctx.fillText('___ ', center_x, center_y + 100)
+              ctx.font = '20pt Calibri';
+              ctx.fillText('Try again? Hit enter to restart...', center_x, center_y + 150) 
+            }
+            frameNo++;
+          }, 50);  
 
           key('enter', 'mpending', function() {
+            clearInterval(ending);
             delete loader.game;
             key.setScope('null');
             loader.gameStateMachine.endingScreenDone();

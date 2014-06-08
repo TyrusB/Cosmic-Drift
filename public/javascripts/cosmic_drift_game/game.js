@@ -109,7 +109,7 @@
     //Collision Check
     var game = this;
     this.bullets.forEach( function(bullet) {
-      Asteroids.Bullet.prorotype.hitAsteroids.call(bullet, game);
+      Asteroids.Bullet.prototype.hitAsteroids.call(bullet, game);
     })
     
   }
