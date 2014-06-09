@@ -47,18 +47,23 @@
       callbacks: {
         onscrollIntro: function(event, from, to) {
           console.log('intro method called');
+
+          //Make sure only the large, middle canvas is visible to handle scrolling into text.
           $('#rcanvas').hide();
           $('#lcanvas').hide();
           $('#midcanvas').show();
 
-          var maxFrames = 160,
-              frameNo = 0;
-
+          // Context info for the canvas
           var ctx = loader.midcanvas.getContext('2d');
           var center_x = midcanvas.width / 2,
               center_y = midcanvas.height / 2;
 
-          var scrollIntroText = function() {
+          //Frame initialization for the scroll
+          var maxFrames = 160,
+              frameNo = 0;
+
+          // The scroll itself
+          var scrollIntroText = setInterval(function() {
             ctx.clearRect(0, 0, loader.midcanvas.width, loader.midcanvas.height);
             ctx.font = '65pt Calibri';
             ctx.textAlign = 'center';
@@ -73,30 +78,29 @@
             ctx.fillText('Hit enter to begin. Good luck and happy drifting...', center_x, center_y + 200  + (maxFrames - frameNo) / maxFrames * 400)
           
             frameNo = Math.min(frameNo + 1, maxFrames);
-          }
+          }, 25);
 
-          var scroll = setInterval(scrollIntroText, 25);
-
-
-          var game = this;
+          // Bind key handlers and set proper key scope for intro
           key.setScope('intro');
 
           key('enter', 'intro', function() {
-            clearInterval(scroll);
+            clearInterval(scrollIntroText);
 
             loader.gameStateMachine.finishedIntro();
           });
+          
         },
 
         onplayerSelect: function() {
-          key.setScope('playerSelect');
-
+          //Context information for drawing.
           var ctx = loader.midcanvas.getContext('2d');
           var center_x = midcanvas.width / 2,
               center_y = midcanvas.height / 2;
 
-          var selector = null;
+          //Initialize the selection to single player.
+          var selector = 'single';
 
+          // A method for drawing the text that will be superimposed over the selection box
           function drawPlayerSelection() {
             ctx.beginPath();
             ctx.font = '60pt Calibri';
@@ -110,6 +114,7 @@
             ctx.fillText('Multi Player', center_x, center_y + 100);
           }
           
+          //Initialize a Box under the single player selection
           ctx.clearRect(0, 0, loader.midcanvas.width, loader.midcanvas.height);
           ctx.beginPath();
           ctx.rect(center_x - 150, center_y - 50, 300, 75);
@@ -120,7 +125,8 @@
 
           drawPlayerSelection();
 
-          selector = 'single';
+          // Key binding/scope section
+          key.setScope('playerSelect');
 
           key('up', 'playerSelect', function() {
             ctx.clearRect(0, 0, loader.midcanvas.width, loader.midcanvas.height);
@@ -165,22 +171,25 @@
 
         onsinglePlayerGame: function() {
           key.setScope('game');
+
           loader.game = new Asteroids.Game(loader.midcanvas, false);
           loader.game.start();
         },
 
         onsinglePlayerCredits: function() {
-          var maxFrames = 100;
-          key.setScope('spending');
-          
-          var frameNo = 0;
+          //Info on the canvas context and measurements
           var ctx = loader.midcanvas.getContext('2d');
           var center_x = loader.midcanvas.width / 2,
               center_y = loader.midcanvas.height / 2,
               canvasWidth = loader.midcanvas.width,
               canvasHeight = loader.midcanvas.height;
+          
+          //Frame info for the red flash and credits scroll
+          var maxFrames = 100,
+              frameNo = 0;
 
-          var loadFrame = function() {
+          // The interval for the flash/scroll itself
+          var spEnding = setInterval(function() {
             ctx.clearRect(0, 0, canvasWidth, canvasHeight);
             if (frameNo < 4) {
               ctx.beginPath();
@@ -210,33 +219,36 @@
 
             frameNo = Math.min(frameNo + 1, maxFrames)
 
-          }
+          }, 40); 
 
-          var spending = setInterval(loadFrame, 40);     
+          //Key scope and binding methods
+          key.setScope('spEnding');
 
-          key('enter', 'spending', function() {
-            clearInterval(spending);
+          key('enter', 'spEnding', function() {
+            clearInterval(spEnding);
             delete loader.game;
             key.setScope('null');
             loader.gameStateMachine.creditsDone();
           })  
         },
 
+        //This is the state for the first player to select the multiplayer option, 
+        // for when they're waiting for another player to connect
         onwaitingForOther: function() {
-          // var midctx = loader.midcanvas.getContext('2d');
-          // midctx.clearRect(0, 0, loader.midcanvas.width, loader.midcanvas.height);
-
+          //Ensure the switch to 2-canvas display
           $('#midcanvas').hide();
           $('#lcanvas').show();
           $('#rcanvas').show();
 
+          // Key section
           key.setScope('waiting');
 
+          // Context/dimension info for canvas
           var rctx = loader.rcanvas.getContext('2d');
-          rctx.beginPath();
           var center_rx = loader.rcanvas.width / 2,
               center_ry = loader.rcanvas.height / 2;
 
+          //Method for drawing the basic text saying waiting for another player
           var drawWaitingText = function() {
             rctx.clearRect(0, 0, rcanvas.width, rcanvas.height);
             rctx.beginPath();
@@ -249,6 +261,7 @@
           
           drawWaitingText();
 
+          //Section for flashing waiting dots
           var i = 0; 
           var waitingDots = setInterval(function() {
             switch (i % 3) {
@@ -269,6 +282,7 @@
             i++;
           }, 750);
 
+          // Handle communications with server
           root.openConnection.indicateReady();
           root.openConnection.socket.on('players_ready', function() {
             console.log('ready message received');
@@ -277,7 +291,10 @@
           });
         },
 
+        // The state when another player connects to a multiplayer game:
+        // There's a countdown, and then the game begins
         oncountdown: function() {
+          //Canvas and context info
           var rctx = loader.rcanvas.getContext('2d'),
               lctx = loader.lcanvas.getContext('2d');
           var center_rx = loader.rcanvas.width / 2,
@@ -285,7 +302,7 @@
           var center_lx = loader.lcanvas.width / 2,
               center_ly = loader.lcanvas.height / 2;
 
-
+          //The text on the right screen changes to indicate an opponent has been found
           rctx.clearRect(0, 0, rcanvas.width, rcanvas.height);
           rctx.beginPath();
           rctx.font = '30pt Calibri';
@@ -294,6 +311,8 @@
           rctx.fillText('Opponent Found', center_rx, center_ry - 150);
           rctx.fillText('Get Ready!', center_rx, center_ry - 75);
 
+          //Meanwhile, the left screen displays a countdown
+          // The method below is to prepare the settings for the canvas context
           function prepareLContext() {
             lctx.clearRect(0, 0, lcanvas.width, lcanvas.height);
             lctx.beginPath();
@@ -302,6 +321,7 @@
             lctx.fillStyle = 'white';
           }
           
+          // The countdown itself
           var i = 3;
           var countdown = setInterval(function() {
             if (i > 0) {
@@ -313,6 +333,7 @@
               lctx.fillText('Go!', center_lx, center_ly);
               i--;
             } else {
+              // End the coundown when the number goes below 0
               clearInterval(countdown);
               loader.gameStateMachine.countdownDone();
             }
@@ -321,9 +342,11 @@
 
         onmultiplayerGame: function() {
           key.setScope('game');
+
           loader.game = new Asteroids.Game(loader.lcanvas, true);
           loader.game.start();
 
+          //This method begins listening for game data from the other game. See connection.js
           window.openConnection.beginListening(loader.rcanvas);
         },
 
