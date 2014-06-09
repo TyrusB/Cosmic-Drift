@@ -109,9 +109,20 @@
     //Collision Check
     var game = this;
     this.bullets.forEach( function(bullet) {
-      Asteroids.Bullet.prototype.hitAsteroids.call(bullet, game);
-    })
-    
+      game.asteroids.forEach( function(asteroid) {
+        if (Asteroids.Asteroid.prototype.isCollidedWith.call(asteroid, bullet)) {
+          if (asteroid.radius > Asteroids.Asteroid.SPLIT_SIZE) {
+            game.asteroids.push(
+              new Asteroids.Asteroid(asteroid.posx, asteroid.posy, -1 * bullet.vx / 3, bullet.vy / 3, asteroid.radius / 2 + 2, asteroid.color),
+              new Asteroids.Asteroid(asteroid.posx, asteroid.posy, bullet.vx / 3, bullet.vy / 3, asteroid.radius / 2 + 2, asteroid.color)
+            )
+          }
+
+          game.removeAsteroid(asteroid);
+          game.removeBullet(bullet);
+        }
+    });
+   }); 
   }
 
   Game.prototype.stopPredictions = function() {
@@ -171,7 +182,8 @@
     if(shipCrashOn && crashed){
       game.stop();
       root.loader.gameStateMachine.crashed();
-      root.openConnection.announceCrash(game.score);
+      root.openConnection.announceCrash();
+      root.openConnection.sendFinalScore(game.score);
     }
 
     //check for bullet/asteroid collisions

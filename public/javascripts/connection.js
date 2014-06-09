@@ -11,9 +11,13 @@
     this.socket.emit('player_ready');
   }
 
-  Connection.prototype.announceCrash = function(score) {
-    this.socket.emit('player_crashed', score);
+  Connection.prototype.announceCrash = function() {
+    this.socket.emit('player_crashed');
   }
+
+  Connection.prototype.sendFinalScore = function(score) {
+    this.socket.emit('final_score', score)
+  } 
 
   Connection.prototype.beginListening = function(otherGameCanvas) {
     var otherContext = otherGameCanvas.getContext('2d'),
@@ -35,6 +39,10 @@
     this.socket.on('other_player_crashed', function(score) {
       otherGame.stopPredictions();
       window.loader.gameStateMachine.otherPlayerCrashed();
+    })
+
+    this.socket.on('final_opponent_score', function(score) {
+      loader.competitionInfo.opponentScore = parseInt(score);
     })
   }
 

@@ -6,6 +6,7 @@
     this.rcanvas = rcanvas;
     this.midcanvas = midcanvas;
 
+    // The loader will hold info about the ongoing player's game here
     this.game = null;
 
     var loader = this;
@@ -341,6 +342,12 @@
         },
 
         onmultiplayerGame: function() {
+          // This holds info regarding the opponents score and whether the player has won or loss
+          loader.competitionInfo = {
+            won: false,
+            opponentScore: 0
+          };
+
           key.setScope('game');
 
           loader.game = new Asteroids.Game(loader.lcanvas, true);
@@ -351,6 +358,9 @@
         },
 
         onwindingDownWon: function() {
+          //Opponent crashed, so you won
+          loader.competitionInfo.won = true;
+
           key.setScope('windingDown');
           
           var frameNo = 0;
@@ -392,6 +402,8 @@
                 ctx.fillStyle = 'red';
                 ctx.fillText(countdownNum, center_x, center_y);
               } else {
+                // If you've survived the bonus round, send your final score, clean up, and transition to the ending screen
+                root.openConnection.sendFinalScore(loader.game.score);
                 clearInterval(windingDownRScreen);
                 delete loader.ending
                 loader.gameStateMachine.bonusTimerDone();
@@ -409,6 +421,9 @@
         },
 
         onwindingDownLost: function() {
+          //You crashed first, so opponent won;
+          loader.competitionInfo.won = false;
+
           key.setScope('windingDown');
           
           var frameNo = 0;
@@ -484,13 +499,26 @@
 
           // Handle the display of the ending text
           key.setScope('mpending');
-          
+
+          //Get canvas context/dimension info
           var ctx = loader.midcanvas.getContext('2d');
           var center_x = loader.midcanvas.width / 2,
               center_y = loader.midcanvas.height / 2,
               canvasWidth = loader.midcanvas.width,
               canvasHeight = loader.midcanvas.height;
+          
           var frameNo = 0;
+
+          //Calculate values for ending text:
+          if (loader.competitionInfo.won) {
+            var winStatusText = "You win!",
+                marginText = 'Margin of Victory:'
+            var margin = loader.game.score - loader.competitionInfo.opponentScore;
+          } else {
+            var winStatusText = "You lose!",
+                marginText = 'Margin of Defeat:'
+            var margin = loader.competitionInfo.opponentScore - loader.game.score;
+          }
 
           var ending = setInterval(function() {
             ctx.clearRect(0, 0, canvasWidth, canvasHeight);
@@ -513,9 +541,9 @@
               ctx.fillText('Game Over', center_x, center_y - 100);
               ctx.font = '30pt Calibri';
               ctx.fillStyle = 'white';
-              ctx.fillText('Player __ Wins!', center_x, center_y)
-              ctx.fillText('Margin of Victory: ', center_x, center_y + 50)
-              ctx.fillText('___ ', center_x, center_y + 100)
+              ctx.fillText(winStatusText, center_x, center_y)
+              ctx.fillText(marginText, center_x, center_y + 50)
+              ctx.fillText(margin , center_x, center_y + 100)
               ctx.font = '20pt Calibri';
               ctx.fillText('Try again? Hit enter to restart...', center_x, center_y + 150) 
             }
