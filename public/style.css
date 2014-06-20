@@ -1,0 +1,35 @@
+body {
+  background-color: #141613;
+  background: url("images/cockpit.jpg") no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+
+.two-screen {
+    margin-left: 20px;
+    margin-right: auto;
+    width: 500px;
+    height: 500px;
+    float: left;
+    display: none;
+}
+
+#canvas-holder {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-left: -500px;
+    margin-top: -250px;
+}
+
+canvas {
+  background-color: black;
+    border: 2px solid black;
+    margin-left: auto;
+    margin-right: auto;
+    display: inline;
+    background: url('images/space.jpg');
+}
+

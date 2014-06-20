@@ -2,6 +2,17 @@
 <html>
 <head>
     <title>Cosmic Drift</title>
+    <link rel='stylesheet' type='text/css' href='style.css'>
+</head>
+<body>
+    <div id='canvas-holder'>
+        <canvas class='two-screen' id="lcanvas" width="500" height="500"></canvas>
+
+        <canvas class='two-screen' id='rcanvas' width='500' height='500'></canvas>
+
+        <canvas class='one-screen' id='midcanvas' width='1000' height='500'></canvas>
+    </div>
+
     <script src="vendor/jquery-1.11.1.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src='javascripts/connection.js'></script>
@@ -15,16 +26,6 @@
     <script src='javascripts/cosmic_drift_game/ship.js'></script>
     <script src='javascripts/cosmic_drift_game/bullet.js'></script>
     <script src='javascripts/cosmic_drift_game/game.js'></script>
-</head>
-<body>
-    <div id='canvas-holder'>
-        <canvas class='two-screen' id="lcanvas" width="500" height="500"></canvas>
-
-        <canvas class='two-screen' id='rcanvas' width='500' height='500'></canvas>
-
-        <canvas class='one-screen' id='midcanvas' width='1000' height='500'></canvas>
-    </div>
-
     <script>
         var midcanvas = document.getElementById("midcanvas"),
             lcanvas = document.getElementById('lcanvas'),
@@ -44,45 +45,3 @@
     </script>
 </body>
 </html>
-
-<style>
-body h1 {
-  text-align: center;
-  color: yellow;
-}
-
-.two-screen {
-    margin-left: 20px;
-    margin-right: auto;
-    width: 500px;
-    height: 500px;
-    float: left;
-    display: none;
-}
-
-
-#canvas-holder {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    margin-left: -500px;
-    margin-top: -250px;
-}
-
-canvas {
-    border: 2px solid black;
-    margin-left: auto;
-    margin-right: auto;
-    display: inline;
-    background: url('images/space.jpg');
-}
-
-body {
-  background: url("images/cockpit.jpg") no-repeat center center fixed;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
-}
-</style>
-
